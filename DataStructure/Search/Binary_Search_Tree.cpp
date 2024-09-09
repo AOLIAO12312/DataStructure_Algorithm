@@ -7,13 +7,17 @@ template <class T>
 class TNode {
     public:
     T data;
-    TNode<T>* lchild, *rchild;
+    TNode<T>* lchild, * rchild;
+    TNode<T>* parent;//寻找父节点
+    unsigned int height;
     TNode() {
-        lchild = rchild = nullptr;
+        parent = lchild = rchild = nullptr;
+        this->height = 0;
     }
     TNode(T t) {
-        lchild = rchild = nullptr;
+        parent = lchild = rchild = nullptr;
         this->data = t;
+        this->height = 0;
     }
 };
 template <class T>
@@ -36,40 +40,72 @@ class BST {//Binary Search Tree
         }
         return tmpNode;
     }
+    unsigned int UpdateHeightUniverse(TNode<T>* Node) {//从root开始通过递归重新计算height,消耗较多的资源
+        if (Node->lchild == nullptr && Node->rchild == nullptr) {
+            Node->height = 1;
+        } else if (Node->lchild != nullptr && Node->rchild == nullptr) {
+            Node->height = UpdateHeightUniverse(Node->lchild) + 1;
+        } else if (Node->lchild == nullptr && Node->rchild != nullptr) {
+            Node->height = UpdateHeightUniverse(Node->rchild) + 1;
+        } else {
+            Node->height = max(UpdateHeightUniverse(Node->lchild) + 1, UpdateHeightUniverse(Node->rchild) + 1);
+        }
+        return Node->height;
+    }
+    void UpdateHeight(TNode<T>* Node) {//从某个节点向上更新高度，确保是新加入的节点
+        //新加入的节点高度必为1
+        while (Node != nullptr) {
+            if (Node->lchild == nullptr && Node->rchild == nullptr) {//新加入节点的情况
+                Node->height = 1;
+            }else if (Node->lchild != nullptr && Node->rchild == nullptr) {
+                Node->height = Node->lchild->height + 1;
+            } else if (Node->lchild == nullptr && Node->rchild != nullptr) {
+                Node->height = Node->rchild->height + 1;
+            } else {
+                Node->height = max(Node->lchild->height + 1,Node->rchild->height + 1);
+            }
+            Node = Node->parent;       
+        }
+        
+    }
     bool insertNode(T t) {
         if (isEmpty == true) {
             root.data = t;
             isEmpty = false;
+            UpdateHeight(&root);
+            return true;
         } else {
             TNode<T>* NewNode = new TNode<T>(t);
             TNode<T>* tmpNode = &root;
             while (tmpNode != nullptr) {
                 if (t < tmpNode->data) {
                     if (tmpNode->lchild == nullptr) {
-                        tmpNode->lchild = NewNode;
-                        return true;
+                        tmpNode->lchild = NewNode;//插入左节点
+                        NewNode->parent = tmpNode;
+                        break;
                     } else {
-                        tmpNode = tmpNode->lchild;
+                        tmpNode = tmpNode->lchild;//转向左子树
                     }
                 } else if (t > tmpNode->data) {
                     if (tmpNode->rchild == nullptr) {
-                        tmpNode->rchild = NewNode;
-                        return true;
+                        tmpNode->rchild = NewNode;//插入右节点
+                        NewNode->parent = tmpNode;
+                        break;
                     } else {
-                        tmpNode = tmpNode->rchild;
+                        tmpNode = tmpNode->rchild;//转向右子树
                     }
                 } else if (t == tmpNode->data) {
-                    cout << "Element exists, insert failed" << endl;
+                    cout << "Element exists, insert failed" << endl;//已存在相同元素，插入失败
                     return false;
                 }
             }
-            return false;
+            UpdateHeight(NewNode);
+            return true;
         }
-        return false;
     }
     bool deleteNode(T t) {
         TNode<T>* tmpNode = &root;
-        TNode<T>* FatherNode;
+        TNode<T>* FatherNode = nullptr;
         while (tmpNode != nullptr && tmpNode->data != t) {
             FatherNode = tmpNode;
             if (t < tmpNode->data) {
@@ -78,10 +114,13 @@ class BST {//Binary Search Tree
                 tmpNode = tmpNode->rchild;
             }
         }
+        return deleteNode(tmpNode, FatherNode);
+    }
+    bool deleteNode(TNode<T>* tmpNode, TNode<T>* FatherNode) {
         if (tmpNode == nullptr) {
             cout << "No such element, delete failed" << endl;
             return false;
-        } else if (tmpNode->data == t) {
+        } else {
             if (tmpNode->lchild == nullptr && tmpNode->rchild == nullptr) {
                 if (FatherNode->lchild == tmpNode) {
                     FatherNode->lchild = nullptr;
@@ -103,11 +142,14 @@ class BST {//Binary Search Tree
             } else {//两侧均有孩子
                 TNode<int>* tNode = tmpNode->rchild;
                 while (tNode->lchild) {
-                    tNode = tNode->lchild;//寻找最左侧节点
+                    tNode = tNode->lchild;//寻找右子树中序遍历后继节点
                 }
-                tmpNode->data = tNode->data;
-                deleteNode(tNode->data);
+                tmpNode->data = tNode->data;//将其与前驱节点/后继节点进行数据替换，然后递归删除其前驱节点/后继节点
+                deleteNode(tNode,tNode->parent);
                 delete tNode;
+            }
+            if (FatherNode != nullptr) {
+                UpdateHeight(FatherNode);//删除后更新节点高度信息
             }
             return true;
         }
@@ -140,7 +182,7 @@ class BST {//Binary Search Tree
         }
     }
     void visit(TNode<T>* tmpNode) {
-        cout << tmpNode->data << endl;
+        cout << tmpNode->data << "  Height = " << tmpNode->height << endl;
     }
 };
 
@@ -154,9 +196,10 @@ int main() {
         int i = stoi(token);
         b.insertNode(i);
     }
+    //b.UpdateHeightUniverse(&b.root);
     b.inOrder2(&b.root);
-    b.deleteNode(10);//7 3 5 8 6 9 2 4
+    b.deleteNode(46);//7 3 5 8 6 9 2 4
     cout << endl;
-    b.inOrder2(&b.root);
+    b.inOrder2(&b.root);//50 44 55 40 47 45 48 49
     return 0;
 }
