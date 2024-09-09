@@ -111,7 +111,7 @@ class BST {//Binary Search Tree
                 tmpNode = tmpNode->parent;
                 if (abs(getHeight(tmpNode->lchild) - getHeight(tmpNode->rchild)) > 1) {//找到不平衡的节点
                     if (getHeight(tmpNode->lchild) > getHeight(tmpNode->rchild)) {//L
-                        if (tmpNode->lchild->lchild->height > tmpNode->lchild->rchild->height) {//L
+                        if (getHeight(tmpNode->lchild->lchild) > getHeight(tmpNode->lchild->rchild)) {//L
                             //处理LL情况
                             RightRotate(tmpNode->lchild);
                         } else {
@@ -281,13 +281,13 @@ int main() {
     //     int i = stoi(token);
     //     b.insertNode(i);
     // }
-    for (int i = 0;i < 1000;++i) {
+    for (int i = 1000;i > 0;--i) {
         b.insertNode(i);
     }
     system("pause");
     b.inOrder2(b.root);
-    // b.deleteNode(46);//7 3 5 8 6 9 2 4
+    // b.deleteNode(46);
     // cout << endl;
-    // b.inOrder2(b.root);//50 44 55 40 47 45 48 49
+    // b.inOrder2(b.root);
     return 0;
 }
