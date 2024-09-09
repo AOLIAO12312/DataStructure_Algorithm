@@ -1,7 +1,9 @@
 #include<iostream>
 #include<string>
 #include<sstream>
+#include<assert.h>
 #include<stack>
+#include<math.h>
 using namespace std;
 template <class T>
 class TNode {
@@ -9,7 +11,7 @@ class TNode {
     T data;
     TNode<T>* lchild, * rchild;
     TNode<T>* parent;//寻找父节点
-    unsigned int height;
+    int height;
     TNode() {
         parent = lchild = rchild = nullptr;
         this->height = 0;
@@ -23,10 +25,11 @@ class TNode {
 template <class T>
 class BST {//Binary Search Tree
     public:
-    TNode<T> root;
+    TNode<T>* root;
     bool isEmpty;
     public:
     BST() {
+        root = new TNode<T>();
         isEmpty = true;
     }
     TNode<T>* BST_Search(T target) {
@@ -70,13 +73,13 @@ class BST {//Binary Search Tree
     }
     bool insertNode(T t) {
         if (isEmpty == true) {
-            root.data = t;
+            root->data = t;
             isEmpty = false;
-            UpdateHeight(&root);
+            UpdateHeight(root);
             return true;
         } else {
             TNode<T>* NewNode = new TNode<T>(t);
-            TNode<T>* tmpNode = &root;
+            TNode<T>* tmpNode = root;
             while (tmpNode != nullptr) {
                 if (t < tmpNode->data) {
                     if (tmpNode->lchild == nullptr) {
@@ -99,12 +102,94 @@ class BST {//Binary Search Tree
                     return false;
                 }
             }
-            UpdateHeight(NewNode);
-            return true;
+            UpdateHeight(NewNode);//更新节点高度信息
+
+            //为了构建平衡二叉树
+            //从插入的节点开始向上查找平衡因子绝对值大于一的节点
+            tmpNode = NewNode;
+            while (tmpNode->parent != nullptr) {
+                tmpNode = tmpNode->parent;
+                if (abs(getHeight(tmpNode->lchild) - getHeight(tmpNode->rchild)) > 1) {//找到不平衡的节点
+                    if (getHeight(tmpNode->lchild) > getHeight(tmpNode->rchild)) {//L
+                        if (tmpNode->lchild->lchild->height > tmpNode->lchild->rchild->height) {//L
+                            //处理LL情况
+                            RightRotate(tmpNode->lchild);
+                        } else {
+                            //处理LR情况
+                            LeftRotate(tmpNode->lchild->rchild);
+                            RightRotate(tmpNode->lchild);
+                        }
+                    } else {
+                        if (getHeight(tmpNode->rchild->lchild) > getHeight(tmpNode->rchild->rchild)) {//R
+                            //处理RL情况
+                            RightRotate(tmpNode->rchild->lchild);
+                            LeftRotate(tmpNode->rchild);
+                        } else {
+                            //处理RR情况
+                            LeftRotate(tmpNode->rchild);
+                        }
+                    }
+                }
+                UpdateHeight(tmpNode);
+            }
+        }
+        return true;
+    }
+    int getHeight(TNode<T>* Node) {
+        if (Node == nullptr) {
+            return 0;
+        } else {
+            return Node->height;
+        }
+    }
+    void RightRotate(TNode<T>* p) {//将Node与其父节点进行右旋操作
+        assert(p->parent != nullptr);
+        TNode<T>* f = p->parent;
+        TNode<T>* gf = f->parent;
+        f->lchild = p->rchild;
+        p->rchild = f;
+
+        p->rchild->parent = f;
+        f->parent = p;
+
+        if (gf != nullptr) {//若g不是root节点
+            if (gf->lchild == f) {
+                gf->lchild = p;
+            } else {
+                gf->rchild = p;
+            }
+            p->parent = gf;
+        } else {
+            root = p;
+            p->parent = root;
+            root->parent = nullptr;
+        }
+    }
+    void LeftRotate(TNode<T>* p) {//将Node与其父节点进行左旋操作
+        assert(p->parent != nullptr);
+        TNode<T>* f = p->parent;
+        TNode<T>* gf = f->parent;
+        f->rchild = p->lchild;
+        p->lchild = f;
+
+        p->lchild->parent = f;
+        f->parent = p;
+
+        if (gf != nullptr) {//若g不是root节点
+            if (gf->lchild == f) {
+                gf->lchild = p;
+            } else {
+                gf->rchild = p;
+            }
+            p->parent = gf;
+        } else {
+            root = p;
+            p->parent = root;
+            root->parent = nullptr;
         }
     }
     bool deleteNode(T t) {
-        TNode<T>* tmpNode = &root;
+        TNode<T>* tmpNode = root;
         TNode<T>* FatherNode = nullptr;
         while (tmpNode != nullptr && tmpNode->data != t) {
             FatherNode = tmpNode;
@@ -188,18 +273,21 @@ class BST {//Binary Search Tree
 
 int main() {
     BST<int> b;
-    string input;
-    getline(cin, input);
-    stringstream ss(input);
-    string token;
-    while (ss >> token) {//34 55 67 12 2 43 71 89
-        int i = stoi(token);
+    // string input;
+    // getline(cin, input);
+    // stringstream ss(input);
+    // string token;
+    // while (ss >> token) {//34 55 67 12 2 43 71 89
+    //     int i = stoi(token);
+    //     b.insertNode(i);
+    // }
+    for (int i = 0;i < 1000;++i) {
         b.insertNode(i);
     }
-    //b.UpdateHeightUniverse(&b.root);
-    b.inOrder2(&b.root);
-    b.deleteNode(46);//7 3 5 8 6 9 2 4
-    cout << endl;
-    b.inOrder2(&b.root);//50 44 55 40 47 45 48 49
+    system("pause");
+    b.inOrder2(b.root);
+    // b.deleteNode(46);//7 3 5 8 6 9 2 4
+    // cout << endl;
+    // b.inOrder2(b.root);//50 44 55 40 47 45 48 49
     return 0;
 }
