@@ -103,37 +103,42 @@ class BST {//Binary Search Tree
                 }
             }
             UpdateHeight(NewNode);//更新节点高度信息
+            //更新后的二叉树不一定是平衡二叉树
+            //需要进行平衡
 
-            //为了构建平衡二叉树
-            //从插入的节点开始向上查找平衡因子绝对值大于一的节点
-            tmpNode = NewNode;
-            while (tmpNode->parent != nullptr) {
-                tmpNode = tmpNode->parent;
-                if (abs(getHeight(tmpNode->lchild) - getHeight(tmpNode->rchild)) > 1) {//找到不平衡的节点
-                    if (getHeight(tmpNode->lchild) > getHeight(tmpNode->rchild)) {//L
-                        if (getHeight(tmpNode->lchild->lchild) > getHeight(tmpNode->lchild->rchild)) {//L
-                            //处理LL情况
-                            RightRotate(tmpNode->lchild);
-                        } else {
-                            //处理LR情况
-                            LeftRotate(tmpNode->lchild->rchild);
-                            RightRotate(tmpNode->lchild);
-                        }
+            return balanceTree(NewNode);
+        }
+    }
+    bool balanceTree(TNode<T>* Node) {//从Node节点向上寻找不平衡节点，并进行平衡
+         //为了构建平衡二叉树
+         //从插入的节点开始向上查找平衡因子绝对值大于一的节点
+        TNode<T>* tmpNode = Node;
+        while (tmpNode != nullptr && tmpNode->parent != nullptr) {
+            tmpNode = tmpNode->parent;
+            if (abs(getHeight(tmpNode->lchild) - getHeight(tmpNode->rchild)) > 1) {//找到不平衡的节点
+                if (getHeight(tmpNode->lchild) > getHeight(tmpNode->rchild)) {//L
+                    if (getHeight(tmpNode->lchild->lchild) > getHeight(tmpNode->lchild->rchild)) {//L
+                        //处理LL情况
+                        RightRotate(tmpNode->lchild);
                     } else {
-                        if (getHeight(tmpNode->rchild->lchild) > getHeight(tmpNode->rchild->rchild)) {//R
-                            //处理RL情况
-                            RightRotate(tmpNode->rchild->lchild);
-                            LeftRotate(tmpNode->rchild);
-                        } else {
-                            //处理RR情况
-                            LeftRotate(tmpNode->rchild);
-                        }
+                        //处理LR情况
+                        LeftRotate(tmpNode->lchild->rchild);
+                        RightRotate(tmpNode->lchild);
+                    }
+                } else {
+                    if (getHeight(tmpNode->rchild->lchild) > getHeight(tmpNode->rchild->rchild)) {//R
+                        //处理RL情况
+                        RightRotate(tmpNode->rchild->lchild);
+                        LeftRotate(tmpNode->rchild);
+                    } else {
+                        //处理RR情况
+                        LeftRotate(tmpNode->rchild);
                     }
                 }
-                UpdateHeight(tmpNode);
             }
-        }
-        return true;
+            UpdateHeight(tmpNode);
+         }
+         return true;
     }
     int getHeight(TNode<T>* Node) {
         if (Node == nullptr) {
@@ -190,52 +195,57 @@ class BST {//Binary Search Tree
     }
     bool deleteNode(T t) {
         TNode<T>* tmpNode = root;
-        TNode<T>* FatherNode = nullptr;
         while (tmpNode != nullptr && tmpNode->data != t) {
-            FatherNode = tmpNode;
             if (t < tmpNode->data) {
                 tmpNode = tmpNode->lchild;
             } else if (t > tmpNode->data) {
                 tmpNode = tmpNode->rchild;
             }
         }
-        return deleteNode(tmpNode, FatherNode);
+        return deleteNode(tmpNode);
     }
-    bool deleteNode(TNode<T>* tmpNode, TNode<T>* FatherNode) {
+    bool deleteNode(TNode<T>* tmpNode) {
         if (tmpNode == nullptr) {
             cout << "No such element, delete failed" << endl;
             return false;
         } else {
+            TNode<T>* FatherNode = tmpNode->parent;
             if (tmpNode->lchild == nullptr && tmpNode->rchild == nullptr) {
                 if (FatherNode->lchild == tmpNode) {
                     FatherNode->lchild = nullptr;
                 } else {
                     FatherNode->rchild = nullptr;
                 }
+                delete tmpNode;
+                tmpNode = nullptr;
             } else if (tmpNode->rchild == nullptr && tmpNode->lchild != nullptr) {//左侧有孩子
                 if (FatherNode->lchild == tmpNode) {
                     FatherNode->lchild = tmpNode->lchild;
                 } else {
                     FatherNode->rchild = tmpNode->lchild;                    
                 }
+                delete tmpNode;
+                tmpNode = nullptr;
             } else if (tmpNode->rchild != nullptr && tmpNode->lchild == nullptr) {//右侧有孩子
                 if (FatherNode->lchild == tmpNode) {
                     FatherNode->lchild = tmpNode->rchild;
                 } else {
                     FatherNode->rchild = tmpNode->rchild;                    
-                }         
+                }
+                delete tmpNode;
+                tmpNode = nullptr;
             } else {//两侧均有孩子
                 TNode<int>* tNode = tmpNode->rchild;
                 while (tNode->lchild) {
                     tNode = tNode->lchild;//寻找右子树中序遍历后继节点
                 }
                 tmpNode->data = tNode->data;//将其与前驱节点/后继节点进行数据替换，然后递归删除其前驱节点/后继节点
-                deleteNode(tNode,tNode->parent);
-                delete tNode;
+                deleteNode(tNode);
             }
             if (FatherNode != nullptr) {
                 UpdateHeight(FatherNode);//删除后更新节点高度信息
             }
+            balanceTree(FatherNode);
             return true;
         }
         cout << "???" << endl;
@@ -273,21 +283,21 @@ class BST {//Binary Search Tree
 
 int main() {
     BST<int> b;
-    // string input;
-    // getline(cin, input);
-    // stringstream ss(input);
-    // string token;
-    // while (ss >> token) {//34 55 67 12 2 43 71 89
-    //     int i = stoi(token);
-    //     b.insertNode(i);
-    // }
-    for (int i = 1000;i > 0;--i) {
+    string input;
+    getline(cin, input);
+    stringstream ss(input);
+    string token;
+    while (ss >> token) {//34 55 67 12 2 43 71 89
+        int i = stoi(token);
         b.insertNode(i);
     }
-    system("pause");
+    // for (int i = 5;i > 0;--i) {
+    //     b.insertNode(i);
+    // }
+    //system("pause");
     b.inOrder2(b.root);
-    // b.deleteNode(46);
-    // cout << endl;
-    // b.inOrder2(b.root);
+    b.deleteNode(4);
+    cout << endl;
+    b.inOrder2(b.root);
     return 0;
 }
