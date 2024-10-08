@@ -46,12 +46,17 @@ void insertSortBin(vector<int>& v) {//折半插入排序
 
 void bubbleSort(vector<int>& v) {//冒泡排序
     for (int i = 0;i < v.size();++i) {
+        bool flag = false;
         for (int j = 0;j < v.size() - i - 1;++j) {
             if (v[j] > v[j + 1]) {
                 int tmp = v[j];
                 v[j] = v[j + 1];
                 v[j + 1] = tmp;
+                flag = true;
             }
+        }
+        if (flag == false) {//如果没有进行交换则表明该序列已经有序
+            return;
         }
     }
 }
@@ -59,7 +64,7 @@ void bubbleSort(vector<int>& v) {//冒泡排序
 int main() {
     vector<int> v = { 101,100,49,38,65,97,76,13,27,49 };
     printVec(v);
-    insertSortBin(v);
-    //bubbleSort(v);
+    //insertSortBin(v);
+    bubbleSort(v);
     printVec(v);
 }
