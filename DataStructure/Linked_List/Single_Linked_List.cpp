@@ -19,7 +19,7 @@ public:
 template <class T>
 class LinkedList{
 private:
-    LNode<T> head;
+    LNode<T> head;//头节点
     LNode<T>* LastNode;//记录最后一个节点的位置 //方便尾插
     int size;
 public:
@@ -49,7 +49,8 @@ public:
             return false;
         }
     }
-    bool push_back(T t){//在尾部插入节点//尾插法 O(1) 需要记录尾部节点的位置
+    bool push_back(T t) {//在尾部插入节点//尾插法 O(1) 需要记录尾部节点的位置
+        cout << "push_back:" << t << endl;
         LNode<T>* Node = new LNode<T>(t);
         if(Node == NULL){
             cout << "Memory allocated failed" << endl;
@@ -64,8 +65,9 @@ public:
         ++this->size;
         return true;
     }
-    bool push_front(T t){//头插
-        return this->listInsert(1,t);
+    bool push_front(T t) {//头插
+        cout << "push_front:" << t << endl;
+        return this->listInsert(1, t);
     }
     int getSize(){
         return this->size;
@@ -123,7 +125,8 @@ public:
 
     //若给出节点，则前插和后插的时间复杂度都为O(1)
     //需要考虑给出节点为最后一个节点的情况
-    bool Delete(int index){//从1开始索引，头节点为第0个节点
+    bool Delete(int index) {//从1开始索引，头节点为第0个节点
+        cout << "Delete index = " << index << endl;
         assert(index <= this->size && index >= 1);
         LNode<T>* Node = getElem(index - 1);
         LNode<T>* DeleteNode = Node->next;
@@ -144,32 +147,16 @@ public:
     }
 };
 
-class Stu{
-public:
-    string Name;
-    int Age;
-    Stu(){
-        Name = "NULL";
-        Age = -1;
-    }
-    Stu(string name,int age):Name(name),Age(age){}
-    Stu(const Stu& s){
-         this->Age = s.Age;
-         this->Name = s.Name;
-    }
-};//任意数据类型测试
-ostream& operator<<(ostream& cout,Stu s){//重载<<运算符
-    cout << s.Name << " " << s.Age;
-    return cout;
-}
+
 
 int main(){
     LinkedList<int> ll;
     for(int i = 0;i<10;++i){
         ll.push_back(i);
-        ll.push_front(i);//单链表的逆置
     }
+    ll.Delete(4);
     ll.push_front(256);
     ll.show();
+    system("pause");
     return 0;
 }

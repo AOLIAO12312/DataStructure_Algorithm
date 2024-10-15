@@ -1,0 +1,15 @@
+@startuml  
+class Account {  
+    - String accountNumber  
+    - double balance  
+    - double interestRate  
+    + Account(String, double, double)  
+    + String getAccountNumber()  
+    + double getBalance()  
+    + double getInterestRate()  
+    + void deposit(double)  
+    + void withdraw(double)  
+    + double calculateInterest()  
+    + String toString()  
+}  
+@enduml

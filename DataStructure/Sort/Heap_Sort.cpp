@@ -11,17 +11,17 @@ void printVec(vector<int>& v) {
 
 void HeadAdjust(vector<int>& v, int k, int len) {
     v[0] = v[k];//保存需要调整的值
-    for (int i = 2 * k;i <= len;i *= 2) {
-        if (i < len && v[i] < v[i + 1]) {
-            ++i;
+    for (int i = 2 * k;i <= len;i *= 2) {//i = 2 * k指向左孩子
+        if (i < len && v[i] < v[i + 1]) {//若右孩子大于左孩子
+            ++i;//则指向右孩子
         }
-        if (v[0] >= v[i]) break;
-        else {
+        if (v[0] >= v[i]) break;//如果父节点大于左孩子/右孩子，满足条件，跳出循环
+        else {//若不是
             v[k] = v[i];//小元素下坠
-            k = i;
+            k = i;//以孩子为父节点，重新进入循环，保证小元素下坠
         }
     }
-    v[k] = v[0];
+    v[k] = v[0];//将最终找到的最低节点赋值为最开始需要处理的根节点
 }
 
 //建立大根堆
