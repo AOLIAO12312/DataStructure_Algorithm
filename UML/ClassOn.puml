@@ -1,0 +1,112 @@
+@startuml 大学课堂抽象状态转换图
+
+title 大学课堂抽象状态转换图
+
+' 定义状态样式
+state "课前准备\\n(Pre-class)" as PreClass
+state "学生签到\\n(Attendance)" as Attendance
+state "正式授课\\n(Lecturing)" as Lecturing
+state "课间休息\\n(Break Time)" as BreakTime
+state "异常处理\\n(Exception)" as Exception
+state "暂停授课\\n(Paused)" as Paused
+state "继续授课\\n(Continuing)" as Continuing
+state "课堂讨论\\n(Discussion)" as Discussion
+state "实验环节\\n(Lab Session)" as LabSession
+state "作业布置\\n(Assignment)" as Assignment
+state "答疑解惑\\n(Q&A Session)" as QASession
+state "课堂测验\\n(Quiz/Test)" as Quiz
+state "成果展示\\n(Presentation)" as Presentation
+state "小组汇报\\n(Group Report)" as GroupReport
+state "课程总结\\n(Summary)" as Summary
+state "评估反馈\\n(Evaluation)" as Evaluation
+state "正常结束\\n(Normal End)" as NormalEnd
+state "延期完成\\n(Extended End)" as ExtendedEnd
+state "未开始\\n(Not Started)" as NotStarted
+
+' 基础流程
+[*] --> NotStarted
+NotStarted --> PreClass : 课程开始
+PreClass --> Attendance : 准备就绪
+Attendance --> Lecturing : 签到完成
+Lecturing --> BreakTime : 课时过半\n/课间铃响
+BreakTime --> Continuing : 休息结束
+
+' 异常处理分支
+PreClass --> Exception : 课程取消
+Attendance --> Exception : 签到异常
+Lecturing --> Exception : 紧急情况
+Lecturing --> Paused : 突发事件
+Paused --> Continuing : 问题解决
+Exception --> NotStarted : 重新安排
+
+' 授课中的分支活动
+Lecturing --> Discussion : 组织讨论
+Lecturing --> LabSession : 进入实验
+Lecturing --> QASession : 集中答疑
+
+' 讨论环节后续
+Discussion --> Assignment : 讨论结束\n布置作业
+Discussion --> Continuing : 继续讲课
+
+' 实验环节后续
+LabSession --> Assignment : 实验报告\n作为作业
+LabSession --> Summary : 实验总结
+
+' 答疑环节后续
+QASession --> Continuing : 答疑完毕
+
+' 作业相关分支
+Assignment --> Quiz : 随堂测验
+Assignment --> Presentation : 成果展示
+Assignment --> Continuing : 简单任务
+
+' 测验和展示后续
+Quiz --> Summary : 测验完成
+Presentation --> GroupReport : 小组汇报
+GroupReport --> Summary : 汇报完成
+
+' 总结和评估
+Summary --> Evaluation : 内容总结完
+Evaluation --> NormalEnd : 评估完成
+Continuing --> NormalEnd : 正常完成教学
+
+' 可能的延期情况
+Exception --> ExtendedEnd : 无法及时解决
+Paused --> ExtendedEnd : 长时间中断
+Evaluation --> ExtendedEnd : 需要补充教学
+
+NormalEnd --> [*]
+ExtendedEnd --> [*]
+
+' 添加注释说明
+note right of PreClass
+  教师备课
+  设备调试
+  资料准备
+end note
+
+note right of Lecturing
+  知识点讲解
+  PPT演示
+  板书教学
+end note
+
+note right of Discussion
+  师生问答
+  观点交流
+  思维碰撞
+end note
+
+note left of LabSession
+  动手操作
+  实践验证
+  技能训练
+end note
+
+note bottom of Evaluation
+  教学效果评价
+  学生反馈收集
+  改进建议制定
+end note
+
+@enduml

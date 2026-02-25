@@ -219,5 +219,6 @@ int main() {
     g.AddEdge(2, 3, 4);
     g.Show();//显示矩阵
     cout << g.primMST() << endl;//最小生成树
+    system("pause");
     return 0;
 }

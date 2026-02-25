@@ -1,0 +1,18 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class ReservationComment {
+    +Integer id
+    +Integer userId
+    +Integer coachId
+    +String coachName
+    +Integer coachReservationId
+    +Integer coachRating
+    +Integer venueRating
+    +String venueName
+    +String coachComment
+    +LocalDateTime createdAt
+}
+
+@enduml

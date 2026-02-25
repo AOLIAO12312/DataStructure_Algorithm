@@ -1,0 +1,91 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' ===== 启动与菜单层 =====
+class Main {
+  +main(String[] args)
+}
+
+class DuckMenu {
+  -backgroundImage
+  +showMenu()
+  -handleUserInput(input: String)
+}
+
+Main --> DuckMenu : 启动
+
+' ===== 代码统计模块 =====
+class CodeCounter {
+  -codeAnalyzer: CodeAnalyzer
+  +showUI()
+  -onAnalyzeClicked()
+  -onExportCsv()
+  -onExportJson()
+  -onExportExcel()
+}
+
+class CodeAnalyzer {
+  -languageAnalyzers: Map<String, LanguageAnalyzer>
+  -statsMap: Map<String, LanguageStats>
+  +analyzeDirectory(root: File)
+  +getReport(): String
+  +getLanguageStats(): Map<String, LanguageStats>
+}
+
+interface LanguageAnalyzer {
+  +extractFunctionLengths(file: File): List<Integer>
+}
+
+class CAnalyzer
+class CppAnalyzer
+class JavaAnalyzer
+class PythonAnalyzer
+class CSharpAnalyzer
+
+LanguageAnalyzer <|.. CAnalyzer
+LanguageAnalyzer <|.. CppAnalyzer
+LanguageAnalyzer <|.. JavaAnalyzer
+LanguageAnalyzer <|.. PythonAnalyzer
+LanguageAnalyzer <|.. CSharpAnalyzer
+
+class LanguageStats {
+  -fileCount: int
+  -codeLines: int
+  -blankLines: int
+  -commentLines: int
+  -functionLengths: List<Integer>
+  +getFileCount(): int
+  +getCodeLines(): int
+  +getBlankLines(): int
+  +getCommentLines(): int
+  +getFunctionCount(): int
+  +getMinFunctionLength(): int
+  +getMaxFunctionLength(): int
+  +getAverageFunctionLength(): double
+  +getMedianFunctionLength(): double
+}
+
+CodeCounter --> CodeAnalyzer : 使用
+CodeAnalyzer "1" o-- "*" LanguageStats : 管理统计结果
+CodeAnalyzer "1" o-- "*" LanguageAnalyzer : 通过扩展名选择
+
+' ===== AI 对话模块 =====
+class DeepSeekChat {
+  -apiClient: DeepSeekApiClient
+  +showChatWindow()
+  -onSendMessage()
+}
+
+class DeepSeekApiClient {
+  -apiKey: String
+  -endpointUrl: String
+  +sendMessage(prompt: String): String
+}
+
+DeepSeekChat --> DeepSeekApiClient : 调用
+
+' ===== 关联菜单与功能 =====
+DuckMenu --> CodeCounter : 打开代码统计窗口
+DuckMenu --> DeepSeekChat : 打开 AI 对话窗口
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class MatchRequest {
+    +Integer id
+    +Integer userId
+    +Integer sportId
+    +Gender expectedOpponentGender
+    +LocalDateTime startTime
+    +LocalDateTime endTime
+    +Integer venueId
+    +MatchRequestStatus status
+    +LocalDateTime createdAt
+    +String remark
+}
+
+enum Gender {
+    男
+    女
+    其他
+}
+
+enum MatchRequestStatus {
+    待匹配
+    已匹配
+    已取消
+    已过期
+}
+
+MatchRequest --> Gender : expectedOpponentGender
+MatchRequest --> MatchRequestStatus : status
+
+@enduml

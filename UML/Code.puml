@@ -1,0 +1,40 @@
+@startuml
+title AI 对话功能类图
+
+skinparam classAttributeIconSize 0
+
+' ===== 菜单与入口（与 AI 功能相关） =====
+class DuckMenu {
+  -backgroundImage
+  +showMenu()
+  -handleUserInput(input: String)
+}
+
+class DeepSeekChat {
+  -apiClient: DeepSeekApiClient
+  -chatArea
+  -inputField
+  -sendButton
+  +showChatWindow()
+  -onSendMessage()
+  -appendUserMessage(text: String)
+  -appendAiMessage(text: String)
+}
+
+DuckMenu --> DeepSeekChat : 打开 AI 对话界面
+
+' ===== API 调用层 =====
+class DeepSeekApiClient {
+  -apiKey: String
+  -endpointUrl: String
+  +sendMessage(prompt: String): String
+}
+
+DeepSeekChat --> DeepSeekApiClient : 调用 sendMessage()
+
+' ===== 外部服务表示（可选，用于说明依赖） =====
+class "DeepSeek Chat API" as DeepSeekAPI <<external>>
+
+DeepSeekApiClient --> DeepSeekAPI : HTTP 请求
+
+@enduml

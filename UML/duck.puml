@@ -1,0 +1,69 @@
+@startuml
+title 小鸭换装游戏分析类图
+
+class GameController {
+    - duck: Duck
+    - wardrobe: Wardrobe
+    + changeOutfit(clothing: Clothing, decoration: Decoration, shoes: Shoes)
+    + changeBackground(bg: Background)
+    + saveCurrentLook()
+}
+
+class Duck {
+    - name: String
+    - gender: String
+    - currentClothing: Clothing
+    - currentDecoration: Decoration
+    - currentShoes: Shoes
+    - currentBackground: Background
+    + wearClothing(c: Clothing)
+    + wearDecoration(d: Decoration)
+    + wearShoes(s: Shoes)
+    + setBackground(bg: Background)
+}
+
+class Clothing {
+    - name: String
+    - type: String
+    - genderFit: String
+    - style: String
+}
+
+class Decoration {
+    - name: String
+    - type: String
+    - position: String
+}
+
+class Shoes {
+    - name: String
+    - style: String
+    - size: Float
+}
+
+class Background {
+    - name: String
+    - theme: String
+}
+
+class Wardrobe {
+    - clothes: List<Clothing>
+    - decorations: List<Decoration>
+    - shoes: List<Shoes>
+    + addItem(item)
+    + removeItem(item)
+    + getItemByName(name: String)
+}
+
+' 关系定义
+GameController --> Duck : 控制
+GameController --> Wardrobe : 管理
+Duck "1" o-- "1" Clothing : 穿着
+Duck "1" o-- "1" Decoration : 佩戴
+Duck "1" o-- "1" Shoes : 穿
+Duck "1" o-- "1" Background : 位于
+Wardrobe "1" o-- "*" Clothing
+Wardrobe "1" o-- "*" Decoration
+Wardrobe "1" o-- "*" Shoes
+
+@enduml

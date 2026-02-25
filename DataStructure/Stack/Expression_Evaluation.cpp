@@ -16,7 +16,7 @@ unordered_map<char, function<int(int, int)>> ops = {
         if (b != 0) return a / b;  
         throw std::runtime_error("Division by zero");  
     }}  
-};  
+};
 
 int priority(char c){
     switch(c){

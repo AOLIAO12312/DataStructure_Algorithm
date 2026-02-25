@@ -1,27 +1,13 @@
 #include<iostream>
 using namespace std;
 
-template <class T>
-class Node {
-    public:
-    T data;
-    Node<T>* lchild, * rchild;
-    Node() {
-        lchild = nullptr;
-        rchild = nullptr;
-    }
-};
-template <class T>
-class Tree {
-    public:
-    Node<T>* root;
-    Tree() {
-        root = new Node<T>();
-    }
-
-};
-
 int main() {
-
+    int a = 0x80000000;
+    cout << "a = " << a << endl;
+    if (a == -a) {
+        cout << "a == -a" << endl;
+    } else {
+        cout << "a != -a" << endl;
+    }
     return 0;
 }

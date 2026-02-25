@@ -1,0 +1,20 @@
+@startuml
+class Venue {
+    + Integer id
+    + String name
+    + String country
+    + String state
+    + String city
+    + String district
+    + String street
+    + String postalCode
+    + String fullAddress
+    + String openingTime
+    + String closingTime
+    + String notes
+    + String phone
+    + LocalDateTime createdAt
+    + LocalDateTime updatedAt
+    + Double rating
+    }
+@enduml

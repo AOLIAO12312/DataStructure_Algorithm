@@ -1,0 +1,65 @@
+@startuml
+
+' 定义品种（TeaType）类
+abstract class TeaType {
+    +getBasePrice(): double
+}
+
+class BlackTea {
+    +getBasePrice(): double
+}
+
+class GreenTea {
+    +getBasePrice(): double
+}
+
+' 定义大小（TeaSize）类
+abstract class TeaSize {
+    +getSizeCoefficient(): double
+}
+
+class SmallCup {
+    +getSizeCoefficient(): double
+}
+
+class MediumCup {
+    +getSizeCoefficient(): double
+}
+
+class LargeCup {
+    +getSizeCoefficient(): double
+}
+
+class ExtraLargeCup {
+    +getSizeCoefficient(): double
+}
+
+' 茶类（Tea）包含品种和大小，计算价格方法
+class Tea {
+    -type: TeaType
+    -size: TeaSize
+    +Tea(type: TeaType, size: TeaSize)
+    +calculatePrice(): double
+    +getType(): String
+    +getSize(): String
+}
+
+' 茶类工厂（TeaFactory）负责创建不同品种和大小的茶
+class TeaFactory {
+    +createTea(type: String, size: String): Tea
+}
+
+' 定义继承关系
+TeaType <|-- BlackTea
+TeaType <|-- GreenTea
+TeaSize <|-- SmallCup
+TeaSize <|-- MediumCup
+TeaSize <|-- LargeCup
+TeaSize <|-- ExtraLargeCup
+
+' 茶与品种和大小之间的关联
+Tea --> TeaType
+Tea --> TeaSize
+TeaFactory --> Tea
+
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class CoachProfile {
+    +Integer userId
+    +String realName
+    +String profileDescription
+    +Integer coachedSports
+    +Float rating
+    +Boolean isActive
+}
+
+@enduml

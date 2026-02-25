@@ -183,7 +183,7 @@ int main() {
     g.AddEdge(3, 7);
     g.AddEdge(2, 6);
     g.Show();
-    g.BFSTraverse();
+    g.BFSTraverse();// 
     cout << endl;
     g.DFSTraverse();
     return 0;

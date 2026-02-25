@@ -1,0 +1,88 @@
+@startuml SafeHome_ClassDiagram
+
+' ===== 类定义开始 =====
+
+class HomeOwner {
+  +String name
+  +String contactInfo
+  +void receiveAlert(String message)
+  +void armSystem()
+  +void disarmSystem()
+}
+
+class Sensor {
+  +String sensorId
+  +String type       // e.g., Motion, Smoke, Water
+  +String location
+  +boolean isActive
+  +void triggerEvent()
+}
+
+class ControlPanel {
+  +String panelId
+  +boolean isArmed
+  +void arm()
+  +void disarm()
+  +void displayStatus()
+}
+
+class System {
+  +boolean isSystemArmed
+  +List<Sensor> sensors
+  +List<Alarm> alarms
+  +void processEvent(SensorEvent event)
+  +void triggerAlarm(Alarm alarm)
+  +void addSensor(Sensor sensor)
+}
+
+class SensorEvent {
+  +String eventId
+  +Sensor sourceSensor
+  +DateTime timestamp
+  +String eventType
+  +void logEvent()
+}
+
+class Alarm {
+  +String alarmId
+  +boolean isTriggered
+  +void activate()
+  +void deactivate()
+}
+
+class FloorPlan {
+  +String planId
+  +String layoutImageURL
+  +List<Sensor> sensorsOnPlan
+  +void displaySensors()
+  +void updateSensorPosition(Sensor sensor, String newPosition)
+}
+
+' ===== 类之间的关系 =====
+
+' HomeOwner 与 System / ControlPanel 有使用关系
+HomeOwner --> ControlPanel : 使用
+
+' ControlPanel 与 System 关联，用户通过控制面板操作系统
+ControlPanel --> System : 控制
+
+' System 管理多个 Sensor 和 Alarm
+System "1" *-- "0..*" Sensor : 包含
+System "1" *-- "0..*" Alarm : 触发
+
+' Sensor 可以产生 SensorEvent
+Sensor --> SensorEvent : 产生
+
+' System 处理 SensorEvent
+System --> SensorEvent : 接收并处理
+
+' Alarm 属于 System，也可以独立存在
+System --> Alarm : 管理
+
+' FloorPlan 显示 Sensor 位置信息
+FloorPlan "1" *-- "0..*" Sensor : 显示
+
+' 可选：HomeOwner 也可以查看 FloorPlan
+HomeOwner --> FloorPlan : 查看
+
+@enduml

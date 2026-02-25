@@ -1,0 +1,43 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class User {
+    +Integer id
+    +String username
+    +Gender gender
+    +LocalDate birthday
+    +UserType userType
+    +UserStatus status
+    +String phone
+    +String password
+    +String bio
+    +Integer rankScore
+    +Integer reputationScore
+    +LocalDateTime createdAt
+    +LocalDateTime updatedAt
+}
+
+enum Gender {
+    男
+    女
+    其他
+}
+
+enum UserType {
+    普通用户
+    教练
+    管理员
+}
+
+enum UserStatus {
+    正常
+    注销
+    封禁
+}
+
+User --> Gender : gender
+User --> UserType : userType
+User --> UserStatus : status
+
+@enduml

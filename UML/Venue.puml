@@ -1,0 +1,30 @@
+@startuml
+
+package com.sportsmate.controller {
+  class VenueController
+}
+
+package com.sportsmate.dto {
+  class VenueDTO
+  class VenueSportDTO
+}
+
+package com.sportsmate.pojo {
+  class PageBean
+  class Result
+  class Venue
+  class VenueSport
+}
+
+package com.sportsmate.service {
+  interface VenueService
+}
+
+VenueController --> VenueService
+VenueController --> Venue
+VenueController --> VenueDTO
+VenueController --> VenueSportDTO
+VenueController --> PageBean
+VenueController --> Result
+
+@enduml

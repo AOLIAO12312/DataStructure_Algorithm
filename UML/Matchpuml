@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "com.sportsmate.controller" {
+    class MatchController {
+        +Result request(MatchRequestDTO dto)
+        +Result listRequests(Integer pageNum, Integer pageSize, String status)
+        +Result cancel(Integer requestId, String remark)
+        +Result listSuccessfulMatches(Integer pageNum, Integer pageSize, String status)
+    }
+}
+
+package "com.sportsmate.service" {
+    interface MatchService {
+        +MatchRequest findActiveRequestByUserId(Integer userId)
+        +List<SuccessfulMatch> findActiveMatchByUserId(Integer userId)
+        +void addRequestWithAutoMatch(MatchRequestDTO dto, Integer userId)
+        +PageBean<MatchRequestDTO> listRequests(Integer pageNum, Integer pageSize, String status)
+        +MatchRequest findById(Integer requestId)
+        +void cancel(Integer requestId, String remark)
+        +PageBean<SuccessfulMatchDTO> listSuccessfulMatches(Integer pageNum, Integer pageSize, String status)
+    }
+
+    interface MatchCommentService {
+        +MatchComment findByMatchAndUserId(Integer matchId, Integer userId)
+    }
+}
+
+package "com.sportsmate.pojo" {
+    class Result {
+        +static Result success()
+        +static Result success(Object data)
+        +static Result error(String msg)
+    }
+
+    class MatchRequest {
+        -Integer id
+        -Integer userId
+        -MatchRequestStatus status
+    }
+
+    class SuccessfulMatch {
+        -Integer id
+        -Integer userId
+    }
+
+    class MatchComment
+    enum MatchRequestStatus {
+        申请中
+        匹配成功
+        已取消
+    }
+
+    class PageBean<T>
+}
+
+package "com.sportsmate.dto" {
+    class MatchRequestDTO
+    class SuccessfulMatchDTO
+}
+
+package "com.sportsmate.utils" {
+    class ThreadLocalUtil
+}
+
+MatchController --> MatchService
+MatchController --> MatchCommentService
+MatchController --> Result
+MatchController ..> MatchRequestDTO
+MatchController ..> SuccessfulMatchDTO
+MatchController ..> MatchRequest
+MatchController ..> SuccessfulMatch
+MatchController ..> MatchRequestStatus
+MatchController ..> PageBean
+MatchController ..> ThreadLocalUtil
+MatchService ..> MatchRequestDTO
+MatchService ..> SuccessfulMatchDTO
+@enduml

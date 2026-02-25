@@ -1,0 +1,96 @@
+@startuml
+
+' 用户类
+class User {
+    - id: int
+    - name: String
+    - password: String
+    - telephoneNumber: String
+    + getId(): int
+    + getName(): String
+    + getPassword(): String
+    + getTelephoneNumber(): String
+}
+
+' 火车类
+class Train {
+    - id: int
+    - departurePlace: String
+    - arrivePlace: String
+    - departureTime: Date
+    - arriveTime: Date
+    - price: double
+    + getId(): int
+    + getDeparturePlace(): String
+    + getArrivePlace(): String
+    + getDepartureTime(): Date
+    + getArriveTime(): Date
+    + getPrice(): double
+}
+
+' 用户与火车的关系（用户购票记录）
+class User_Train {
+    - userId: int
+    - trainId: int
+}
+
+' 数据访问对象（Mapper）类
+
+class UserMapper {
+    + selectAllUsers(): List<User>
+    + selectUserById(id: int): User
+    + insertUser(user: User): void
+    + updateUser(user: User): void
+    + deleteUser(id: int): void
+}
+
+class TrainMapper {
+    + selectTrain(): List<Train>
+    + selectTrainById(id: int): Train
+    + updateTrain(train: Train): void
+    + deleteTrain(id: int): void
+    + selectEffectiveTrain(): List<Train>
+}
+
+class User_TrainMapper {
+    + insertUidTid(user_train: User_Train): void
+    + purchaseHistoryId(userId: int): List<int>
+}
+
+' Servlet 类，处理 HTTP 请求
+class UserServlet {
+    + login(username: String, password: String): void
+    + register(user: User): void
+    + updateUser(user: User): void
+    + logout(): void
+    + getMyInformation(): User
+    + existUser(username: String): void
+}
+
+class TrainServlet {
+    + selectTrain(): List<Train>
+    + getTrainInformation(trainId: int): Train
+    + getTrainDetail(): Train
+    + updateTrain(train: Train): void
+    + deleteTrain(trainId: int): void
+    + newTrain(train: Train): void
+}
+
+class User_TrainServlet {
+    + buyTicket(trainId: int): void
+    + purchaseHistory(): List<Train>
+}
+
+' 关系定义
+User "1" -- "0..*" User_Train : has
+Train "1" -- "0..*" User_Train : has
+User_Train "0..*" -- "1" User : belongs_to
+User_Train "0..*" -- "1" Train : belongs_to
+
+UserServlet --> UserMapper : uses
+TrainServlet --> TrainMapper : uses
+User_TrainServlet --> User_TrainMapper : uses
+User_TrainMapper --> User : uses
+TrainMapper --> Train : uses
+
+@enduml

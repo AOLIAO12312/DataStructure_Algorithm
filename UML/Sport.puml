@@ -1,0 +1,11 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+class Sport {
+    +Integer id
+    +sportName
+    +description
+}
+
+@enduml

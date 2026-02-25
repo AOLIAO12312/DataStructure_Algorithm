@@ -1,0 +1,31 @@
+@startuml 简单在线购物系统类图
+
+
+class Buyer {
+}
+
+class Seller {
+}
+
+class Goods {
+}
+
+class Cart {
+}
+
+class Order {
+}
+
+Buyer "1" --> "1" Cart : 拥有
+
+Buyer "1" --> "*" Order : 下单
+
+Goods -- "1" Seller : 属于/销售
+
+Cart ..> Goods : 包含
+
+Order ..> Goods : 包含
+
+Order --> "1" Buyer : 买家
+
+@enduml

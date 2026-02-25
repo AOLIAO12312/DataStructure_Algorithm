@@ -1,0 +1,56 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "com.sportsmate.controller" {
+    class CommentController {
+        +Result addMatchComment(MatchComment comment)
+        +Result deleteMatchComment(Map<String, Integer> requestBody)
+        +Result updateMatchComment(MatchComment comment)
+        +Result getMatchComments()
+
+        +Result addReservationComment(ReservationComment comment)
+        +Result deleteReservationComment(Map<String, Integer> requestBody)
+        +Result updateReservationComment(ReservationComment comment)
+        +Result getReservationComments()
+    }
+}
+
+package "com.sportsmate.service" {
+    interface MatchCommentService {
+        +void addComment(MatchComment comment)
+        +void CheckMatchStatus(MatchComment comment)
+        +void deleteComment(Integer id)
+        +void updateComment(MatchComment comment)
+        +List<MatchComment> getCommentsByUserId(Integer userId)
+    }
+
+    interface ReservationCommentService {
+        +void addCoachComment(ReservationComment comment)
+        +void deleteCoachComment(Integer id)
+        +void updateCoachComment(ReservationComment comment)
+        +List<ReservationComment> getCommentsByUserId(Integer userId)
+    }
+}
+
+package "com.sportsmate.pojo" {
+    class MatchComment
+    class ReservationComment
+    class Result {
+        +static Result success()
+        +static Result success(Object data)
+        +static Result error(String msg)
+    }
+}
+
+package "com.sportsmate.utils" {
+    class ThreadLocalUtil
+}
+
+CommentController --> MatchCommentService
+CommentController --> ReservationCommentService
+CommentController ..> MatchComment
+CommentController ..> ReservationComment
+CommentController --> Result
+CommentController ..> ThreadLocalUtil : uses
+
+@enduml
